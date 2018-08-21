@@ -49,3 +49,5 @@ readme/
 
 # include directory symbolic link files
 Linux/lib/**/*.so.*
+
+*.user
