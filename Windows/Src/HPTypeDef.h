@@ -245,6 +245,29 @@ typedef enum EnSSLVerifyMode
 typedef int (CALLBACK *Fn_SNI_ServerNameCallback)(LPCTSTR lpszServerName);
 typedef Fn_SNI_ServerNameCallback	HP_Fn_SNI_ServerNameCallback;
 
+//add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
+#ifdef __cplusplus
+typedef struct _SSLSubjectEntry
+{
+	std::string country_name;	//国
+	std::string state_province_name;	//省
+	std::string locality_name;	//市
+	std::string organization_name;	//组织
+	std::string organizational_unit_name;	//组织单位
+	std::string common_name;	//公用名
+} SSL_SubjectEntry;
+#else
+typedef struct _SSLSubjectEntry
+{
+	char country_name[256];	//国
+	char state_province_name[256];	//省
+	char locality_name[256];	//市
+	char organization_name[256];	//组织
+	char organizational_unit_name[256];	//组织单位
+	char common_name[256];	//公用名
+} SSL_SubjectEntry;
+#endif
+//add end 2018-09-03 by renyl
 #endif
 
 /*****************************************************************************************************************************************************/
@@ -404,3 +427,4 @@ inline DWORD GetHPSocketVersion()
 {
 	return (HP_VERSION_MAJOR << 24) | (HP_VERSION_MINOR << 16) | (HP_VERSION_REVISE << 8) | HP_VERSION_BUILD;
 }
+

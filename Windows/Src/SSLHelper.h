@@ -431,4 +431,39 @@ template<class T, class S> BOOL ProcessSend(T* pThis, S* pSocketObj, CSSLSession
 	return TRUE;
 }
 
+//add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
+class CSSLCertHelper
+{
+public:
+	class SubjectEntry
+	{
+	public:
+		std::string country_name;	//国
+		std::string state_province_name;	//省
+		std::string locality_name;	//市
+		std::string organization_name;	//组织
+		std::string organizational_unit_name;	//组织单位
+		std::string common_name;	//公用名
+	};
+
+	CSSLCertHelper();
+	~CSSLCertHelper();
+
+	static bool CreatePemPrivateKeyAndCSR(int private_key_size, const std::string & private_key_password, const SubjectEntry & subj_entry,
+		std::string & private_key, std::string & csr);
+
+	//////////////////////////////////////////////////////////////////////////
+	//静态构造
+public:
+	class _StaticConstructor
+	{
+	public:
+		_StaticConstructor() { CSSLCertHelper(); }
+	};
+private:
+	static _StaticConstructor _static_constructor_;
+	//////////////////////////////////////////////////////////////////////////
+};
+//add end 2018-09-03 by renyl
+
 #endif

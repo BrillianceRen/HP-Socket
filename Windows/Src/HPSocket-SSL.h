@@ -324,4 +324,9 @@ typedef CHPSocketPtr<IHttpSyncClient, IHttpClientListener, HttpsSyncClient_Creat
 
 #endif
 
+//add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
+HPSOCKET_API bool SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const std::string & private_key_password, const SSL_SubjectEntry & subj_entry,
+	std::string & private_key, std::string & csr);
+//add end 2018-09-03 by renyl
+
 #endif

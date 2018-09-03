@@ -191,6 +191,20 @@ HPSOCKET_API void HP_Destroy_HttpsSyncClient(IHttpSyncClient* pClient)
 	delete pClient;
 }
 
+
 #endif
 
+//add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
+HPSOCKET_API bool SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const std::string & private_key_password, const SSL_SubjectEntry & subj_entry, std::string & private_key, std::string & csr)
+{
+	CSSLCertHelper::SubjectEntry se;
+	se.country_name = subj_entry.country_name;
+	se.state_province_name = subj_entry.state_province_name;
+	se.locality_name = subj_entry.locality_name;
+	se.organization_name = subj_entry.organization_name;
+	se.organizational_unit_name = subj_entry.organizational_unit_name;
+	se.common_name = subj_entry.common_name;
+	return CSSLCertHelper::CreatePemPrivateKeyAndCSR(private_key_size, private_key_password, se, private_key, csr);
+}
+//add end 2018-09-03 by renyl
 #endif

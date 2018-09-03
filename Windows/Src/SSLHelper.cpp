@@ -33,6 +33,14 @@
 #include "openssl/x509v3.h"
 #include "../Common/Src/WaitFor.h"
 
+
+//add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
+#include <openssl/rand.h>
+#include <openssl/bn.h>
+#include <openssl/rsa.h>
+#include <random>
+//add end 2018-09-03 by renyl
+
 #include <atlpath.h>
 
 /*
@@ -671,5 +679,184 @@ void CSSLSessionPool::Clear()
 
 	m_itPool.Clear();
 }
+
+#if true	//客户端证书助手
+//add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
+std::string GetRandString(int len)
+{
+	try
+	{
+		string _dic = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$%^&*()_+-=[]{}|;:<>?,./";
+		random_device rseed;
+		mt19937 rgen(rseed()); // mersenne_twister
+		uniform_int_distribution<int> idist(0, _dic.length() - 1);
+		string dst = "";
+		for (int i = 0; i < len; i++)
+			dst += _dic.at(idist(rgen));
+		return dst;
+	}
+	catch (...)
+	{		
+		return  std::to_string(time(0));
+	}
+}
+
+EVP_PKEY* CreateEVP_PKEY(int rsa_key_size)
+{
+	try
+	{
+		EVP_PKEY* pkey = nullptr;
+		unique_ptr<RSA, decltype(&::RSA_free)> rsakey(RSA_new(), ::RSA_free);
+		// Generate the RSA key	
+		BIGNUM* bne = BN_new();
+		BN_set_word(bne, RSA_F4);
+		if (0 == RSA_generate_key_ex(rsakey.get(), rsa_key_size, bne, NULL))
+			throw;
+		// Create evp obj to hold our rsakey
+		pkey = EVP_PKEY_new();
+		//EVP_PKEY_assign_RSA(pkey, rsakey.get()); // will be free rsa when EVP_PKEY_free(pkey)
+		if (0 == EVP_PKEY_set1_RSA(pkey, rsakey.get()))
+			throw;
+		return pkey;
+	} 
+	catch (...)
+	{
+		return nullptr;
+	}
+}
+void ReleaseEVP_PKEY(EVP_PKEY * pkey)
+{
+	if (pkey != nullptr)
+		EVP_PKEY_free(pkey);
+}
+
+X509_REQ* CreateX509_REQ(EVP_PKEY* pKey, const CSSLCertHelper::SubjectEntry& subj_entry)
+{
+	try
+	{
+		// set version of x509 req
+		X509_REQ* x509_req = X509_REQ_new();
+		if (1 != X509_REQ_set_version(x509_req, 2))	//2:"version 3"
+			throw;
+
+		// set subject of x509 req
+		X509_NAME* x509_name = X509_REQ_get_subject_name(x509_req);
+		X509_NAME_add_entry_by_txt(x509_name, SN_countryName, MBSTRING_UTF8, (const unsigned char*)subj_entry.country_name.c_str(), -1, -1, 0);	//国家
+		X509_NAME_add_entry_by_txt(x509_name, SN_stateOrProvinceName, MBSTRING_UTF8, (const unsigned char*)subj_entry.state_province_name.c_str(), -1, -1, 0);	//省份
+		X509_NAME_add_entry_by_txt(x509_name, SN_localityName, MBSTRING_UTF8, (const unsigned char*)subj_entry.locality_name.c_str(), -1, -1, 0);	//地区
+		X509_NAME_add_entry_by_txt(x509_name, SN_organizationName, MBSTRING_UTF8, (const unsigned char*)subj_entry.organization_name.c_str(), -1, -1, 0);
+		X509_NAME_add_entry_by_txt(x509_name, SN_organizationalUnitName, MBSTRING_UTF8, (const unsigned char*)subj_entry.organizational_unit_name.c_str(), -1, -1, 0);
+		X509_NAME_add_entry_by_txt(x509_name, SN_commonName, MBSTRING_UTF8, (const unsigned char*)subj_entry.common_name.c_str(), -1, -1, 0);
+
+		// set public key of x509 req
+		if (1 != X509_REQ_set_pubkey(x509_req, pKey))
+			throw;
+
+		// set sign key of x509 req
+		if (0 >= X509_REQ_sign(x509_req, pKey, EVP_sha1()))    // return x509_req->signature->length
+			throw;
+
+		return x509_req;
+	}
+	catch (...)
+	{
+		return nullptr;
+	}
+}
+void ReleaseX509_REQ(X509_REQ* req)
+{
+	if (req != nullptr)
+		X509_REQ_free(req);
+}
+
+bool EVP_PKEYToPem(EVP_PKEY * pkey, const string& password, std::string & ras_key_pem)
+{
+	try
+	{
+		std::unique_ptr<BIO, decltype(&::BIO_free)> bio(BIO_new(BIO_s_mem()), ::BIO_free);
+		if (password.empty())
+			PEM_write_bio_PrivateKey(bio.get(), pkey, NULL, NULL, 0, 0, NULL);
+		else
+			PEM_write_bio_PrivateKey(bio.get(), pkey, EVP_aes_256_cbc(), NULL, 0, 0, (void*)password.c_str());
+		BUF_MEM *key_buf;
+		BIO_get_mem_ptr(bio.get(), &key_buf);
+		int key_len = key_buf->length;
+		char* private_key = (char*)calloc(1, key_len + 1);
+		BIO_read(bio.get(), private_key, key_len);
+		ras_key_pem = private_key;
+		free(private_key);
+		private_key = nullptr;
+		return true;
+	}
+	catch (...)
+	{
+		return false;
+	}
+}
+bool X509_REQToPem(X509_REQ* x509_req, std::string& req_pem)
+{
+	try
+	{
+		unique_ptr<BIO, decltype(&::BIO_free)> bio(BIO_new(BIO_s_mem()), ::BIO_free);
+		PEM_write_bio_X509_REQ(bio.get(), x509_req);
+		BUF_MEM *tmp_buf = nullptr;
+		BIO_get_mem_ptr(bio.get(), &tmp_buf);
+		int req_len = tmp_buf->length;
+		unique_ptr<char, decltype(&free)> req_buf((char*)calloc(1, req_len + 1), free);
+		BIO_read(bio.get(), req_buf.get(), req_len);
+		req_pem = req_buf.get();
+		return true;
+	}
+	catch (...)
+	{
+		return false;
+	}
+}
+
+CSSLCertHelper::CSSLCertHelper()
+{
+	// openssl setup
+	OPENSSL_init_crypto(OPENSSL_INIT_NO_LOAD_CONFIG, NULL);
+
+	//seed PRNG
+	string rand_str = GetRandString(128);
+	RAND_seed(rand_str.c_str(), rand_str.length());
+}
+
+CSSLCertHelper::~CSSLCertHelper()
+{
+	//OPENSSL_cleanup();
+}
+
+bool CSSLCertHelper::CreatePemPrivateKeyAndCSR(int private_key_size, const std::string & private_key_password, const SubjectEntry & subj_entry, 
+	std::string & private_key, std::string & csr)
+{
+	try
+	{
+		unique_ptr<EVP_PKEY, decltype(&ReleaseEVP_PKEY)> pkey(CreateEVP_PKEY(private_key_size), ReleaseEVP_PKEY);
+		if (pkey == nullptr)
+			throw;
+
+		unique_ptr<X509_REQ, decltype(&ReleaseX509_REQ)> req(CreateX509_REQ(pkey.get(), subj_entry), ReleaseX509_REQ);
+		if (req == nullptr)
+			throw;
+
+		if (!EVP_PKEYToPem(pkey.get(), private_key_password, private_key))
+			throw;
+
+		if (!X509_REQToPem(req.get(), csr))
+			throw;
+
+		return true;
+	}
+	catch (...)
+	{
+		return false;
+	}
+}
+
+CSSLCertHelper::_StaticConstructor CSSLCertHelper::_static_constructor_;
+//add end 2018-09-03 by renyl
+#endif
 
 #endif

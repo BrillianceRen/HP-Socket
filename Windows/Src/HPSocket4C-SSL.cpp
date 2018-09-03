@@ -295,4 +295,45 @@ HPSOCKET_API void __HP_CALL Destroy_HP_HttpsSyncClient(HP_HttpsSyncClient pClien
 
 #endif
 
+
+//add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
+HPSOCKET_API bool __HP_CALL SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const LPCSTR private_key_password, const SSL_SubjectEntry * subj_entry, LPSTR * private_key, int * private_key_len, LPSTR * csr, int * csr_len)
+{
+	string p, c;
+
+	CSSLCertHelper::SubjectEntry se;
+	se.country_name = subj_entry->country_name;
+	se.state_province_name = subj_entry->state_province_name;
+	se.locality_name = subj_entry->locality_name;
+	se.organization_name = subj_entry->organization_name;
+	se.organizational_unit_name = subj_entry->organizational_unit_name;
+	se.common_name = subj_entry->common_name;
+	if (!CSSLCertHelper::CreatePemPrivateKeyAndCSR(private_key_size, private_key_password, se, p, c))
+	{
+		*private_key = 0;
+		*csr = 0;
+		return false;
+	}
+
+	*private_key = new char[p.size() + 1]{ 0 };
+	strcpy_s(*private_key, p.size() + 1, p.c_str());
+
+	*csr = new char[c.size() + 1]{ 0 };
+	strcpy_s(*csr, c.size() + 1, c.c_str());
+	return true;
+}
+
+HPSOCKET_API void __HP_CALL SSL_ReleasePrivateKey(LPSTR private_key)
+{
+	if (private_key != nullptr)
+		delete[] private_key;
+}
+
+HPSOCKET_API void __HP_CALL SSL_ReleaseCSR(LPSTR csr)
+{
+	if (csr != nullptr)
+		delete[] csr;
+}
+//add end 2018-09-03 by renyl
+
 #endif

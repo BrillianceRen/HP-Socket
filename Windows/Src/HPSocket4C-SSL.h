@@ -237,4 +237,11 @@ HPSOCKET_API void __HP_CALL Destroy_HP_HttpsSyncClient(HP_HttpsSyncClient pClien
 
 #endif
 
+//add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
+HPSOCKET_API bool __HP_CALL SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const LPCSTR private_key_password, const SSL_SubjectEntry* subj_entry,
+	LPSTR* private_key, int* private_key_len, LPSTR* csr, int* csr_len);
+HPSOCKET_API void __HP_CALL SSL_ReleasePrivateKey(LPSTR private_key);
+HPSOCKET_API void __HP_CALL SSL_ReleaseCSR(LPSTR csr);
+//add end 2018-09-03 by renyl
+
 #endif
