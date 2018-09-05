@@ -71,6 +71,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>HPSocketDLL4C</RootNamespace>
     <ProjectName>HPSocketDLL4C</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -272,7 +273,7 @@
     <IntDir>$(OutDir)obj\$(Configuration)\</IntDir>
     <TargetName>HPSocket4C_UD</TargetName>
     <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.ilk;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi;$(TargetPath)</ExtensionsToDeleteOnClean>
-    <IncludePath>..\..\Common\Lib\openssl\$(VisualStudioVersion)\x86\include;$(IncludePath)</IncludePath>
+     <IncludePath>..\..\Common\Lib\openssl\$(VisualStudioVersion)\x86\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\Common\Lib\openssl\$(VisualStudioVersion)\x86\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='uDebug_xp|Win32'">
@@ -381,7 +382,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>HPSOCKET_EXPORTS;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <DisableSpecificWarnings>4100;4127;4510;4610</DisableSpecificWarnings>
+
+      <DisableSpecificWarnings>4100;4127;4510;4610;4503</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -417,7 +419,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>HPSOCKET_EXPORTS;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <DisableSpecificWarnings>4100;4127;4510;4610</DisableSpecificWarnings>
+
+      <DisableSpecificWarnings>4100;4127;4510;4610;4503</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -456,7 +459,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>HPSOCKET_EXPORTS;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <DisableSpecificWarnings>4100;4127;4510;4610</DisableSpecificWarnings>
+
+      <DisableSpecificWarnings>4100;4127;4510;4610;4503</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -492,7 +496,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>HPSOCKET_EXPORTS;WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <DisableSpecificWarnings>4100;4127;4510;4610</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4100;4127;4510;4610;4503</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -533,7 +537,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HPSOCKET_EXPORTS;WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <DisableSpecificWarnings>4100;4127;4510;4610</DisableSpecificWarnings>
+
+      <DisableSpecificWarnings>4100;4127;4510;4610;4503</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -577,7 +582,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HPSOCKET_EXPORTS;WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <DisableSpecificWarnings>4100;4127;4510;4610</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4100;4127;4510;4610;4503</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -624,7 +629,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HPSOCKET_EXPORTS;WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <DisableSpecificWarnings>4100;4127;4510;4610</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4100;4127;4510;4610;4503</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -668,7 +673,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>HPSOCKET_EXPORTS;WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <DisableSpecificWarnings>4100;4127;4510;4610</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4100;4127;4510;4610;4503</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -736,6 +741,7 @@
     <ClInclude Include="..\..\Common\Src\zlib\zutil.h" />
     <ClInclude Include="..\..\Src\HPSocket4C.h" />
     <ClInclude Include="..\..\Src\HPSocket4C-SSL.h" />
+    <ClInclude Include="..\..\Src\HPThreadPool.h" />
     <ClInclude Include="..\..\Src\HPTypeDef.h" />
     <ClInclude Include="..\..\Src\HttpAgent.h" />
     <ClInclude Include="..\..\Src\HttpClient.h" />
@@ -1557,6 +1563,7 @@
     </ClCompile>
     <ClCompile Include="..\..\Src\HPSocket4C.cpp" />
     <ClCompile Include="..\..\Src\HPSocket4C-SSL.cpp" />
+    <ClCompile Include="..\..\Src\HPThreadPool.cpp" />
     <ClCompile Include="..\..\Src\HttpAgent.cpp" />
     <ClCompile Include="..\..\Src\HttpClient.cpp" />
     <ClCompile Include="..\..\Src\HttpCookie.cpp" />
