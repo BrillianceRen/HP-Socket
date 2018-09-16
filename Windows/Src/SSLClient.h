@@ -36,6 +36,14 @@ public:
 
 	virtual BOOL SetupSSLContext(int iVerifyMode = SSL_VM_NONE, LPCTSTR lpszPemCertFile = nullptr, LPCTSTR lpszPemKeyFile = nullptr, LPCTSTR lpszKeyPasswod = nullptr, LPCTSTR lpszCAPemCertFileOrPath = nullptr)
 		{return m_sslCtx.Initialize(SSL_SM_CLIENT, iVerifyMode, lpszPemCertFile, lpszPemKeyFile, lpszKeyPasswod, lpszCAPemCertFileOrPath, nullptr);}
+	
+	//add begin 2018-09-16 by renyl, 以字符串形式导入证书
+	virtual BOOL SetupSSLContextFromString(int iVerifyMode = SSL_VM_NONE, LPCTSTR lpszPemCert = nullptr, LPCTSTR lpszPemKey = nullptr, LPCTSTR lpszKeyPasswod = nullptr, LPCTSTR lpszCAPemCertFileOrPath = nullptr)
+	{
+		return m_sslCtx.InitializeFromString(SSL_SM_CLIENT, iVerifyMode, lpszPemCert, lpszPemKey, lpszKeyPasswod, lpszCAPemCertFileOrPath, nullptr);
+	}
+	//add end 2018-09-16 by renyl
+
 	virtual void CleanupSSLContext()
 		{m_sslCtx.Cleanup();}
 

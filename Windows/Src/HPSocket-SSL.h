@@ -25,6 +25,10 @@
 
 #include "HPSocket.h"
 
+//add begin 2018-09-15 by renyl, AES-256-CBC加解密
+#include <vector>
+//add end 2018-09-15 by renyl
+
 #ifdef _SSL_SUPPORT
 
 /*****************************************************************************************************************************************************/
@@ -325,8 +329,17 @@ typedef CHPSocketPtr<IHttpSyncClient, IHttpClientListener, HttpsSyncClient_Creat
 #endif
 
 //add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
-HPSOCKET_API bool SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const std::string & private_key_password, const SSL_SubjectEntry & subj_entry,
-	std::string & private_key, std::string & csr);
+HPSOCKET_API bool SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const std::string& private_key_password, const SSL_SubjectEntry & subj_entry,
+	std::string& private_key, std::string& csr);
 //add end 2018-09-03 by renyl
+
+//add begin 2018-09-10 by renyl, 生成MD5
+HPSOCKET_API void SSL_MakeMD5(const std::string& s, std::string& d);
+//add end 2018-09-10 by renyl
+
+//add begin 2018-09-15 by renyl, AES-256-CBC加解密
+static bool SSL_AES_256_CBC_Encrypt(const std::vector<byte>& src, const std::vector<byte>& key, const std::vector<byte> iv, std::vector<byte>& dst);
+static bool SSL_AES_256_CBC_Decrypt(const std::vector<byte>& src, const std::vector<byte>& key, const std::vector<byte> iv, std::vector<byte>& dst);
+//add end 2018-09-15 by renyl
 
 #endif

@@ -1,192 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
  * Copyright: JessMA Open Source (ldcsaa@gmail.com)
  *
@@ -329,6 +140,12 @@ public:
 	* 
 	* 返回值：无
 	*/
+
+	//add begin 2018-09-16 by renyl, 以字符串形式导入证书
+	BOOL InitializeFromString(EnSSLSessionMode enSessionMode, int iVerifyMode = SSL_VM_NONE, LPCTSTR lpszPemCert = nullptr, LPCTSTR lpszPemKey = nullptr, LPCTSTR lpszKeyPasswod = nullptr, LPCTSTR lpszCAPemCertFileOrPath = nullptr, Fn_SNI_ServerNameCallback fnServerNameCallback = nullptr);
+	int AddServerContextFromString(int iVerifyMode, LPCTSTR lpszPemCert, LPCTSTR lpszPemKey, LPCTSTR lpszKeyPasswod = nullptr, LPCTSTR lpszCAPemCertFileOrPath = nullptr);
+	//add begin 2018-09-16 by renyl, 以字符串形式导入证书
+
 	void Cleanup();
 
 	/* 获取 SSL 运行环境 SSL_CTX 对象 */
@@ -373,7 +190,10 @@ private:
 	void SetServerNameCallback(Fn_SNI_ServerNameCallback fn);
 	int AddContext(int iVerifyMode, LPCTSTR lpszPemCertFile, LPCTSTR lpszPemKeyFile, LPCTSTR lpszKeyPasswod, LPCTSTR lpszCAPemCertFileOrPath);
 	BOOL LoadCertAndKey(SSL_CTX* sslCtx, int iVerifyMode, LPCTSTR lpszPemCertFile, LPCTSTR lpszPemKeyFile, LPCTSTR lpszKeyPasswod, LPCTSTR lpszCAPemCertFileOrPath);
-
+	//add begin 2018-09-16 by renyl, 以字符串形式导入证书
+	int AddContextFromString(int iVerifyMode, LPCTSTR lpszPemCert, LPCTSTR lpszPemKey, LPCTSTR lpszKeyPasswod, LPCTSTR lpszCAPemCertFileOrPath);
+	BOOL LoadCertAndKeyFromString(SSL_CTX* sslCtx, int iVerifyMode, LPCTSTR lpszPemCert, LPCTSTR lpszPemKey, LPCTSTR lpszKeyPasswod, LPCTSTR lpszCAPemCertFileOrPath);
+	//add end 2018-09-16 by renyl
 private:
 
 	static int InternalServerNameCallback(SSL* ssl, int* ad, void* arg);
@@ -646,6 +466,15 @@ public:
 
 	static bool CreatePemPrivateKeyAndCSR(int private_key_size, const std::string & private_key_password, const SubjectEntry & subj_entry,
 		std::string & private_key, std::string & csr);
+
+	//add begin 2018-09-10 by renyl, 生成MD5
+	static std::string MakeMD5(const std::string& s);
+	//add end 2018-09-10 by renyl
+
+	//add begin 2018-09-15 by renyl, AES-256-CBC加解密
+	static bool AES_256_CBC_Encrypt(const std::vector<byte>& src, const std::vector<byte>& key, const std::vector<byte> iv, std::vector<byte>& dst);
+	static bool AES_256_CBC_Decrypt(const std::vector<byte>& src, const std::vector<byte>& key, const std::vector<byte> iv, std::vector<byte>& dst);
+	//add end 2018-09-15 by renyl
 
 	//////////////////////////////////////////////////////////////////////////
 	//静态构造

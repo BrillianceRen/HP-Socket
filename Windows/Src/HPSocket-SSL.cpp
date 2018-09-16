@@ -191,11 +191,11 @@ HPSOCKET_API void HP_Destroy_HttpsSyncClient(IHttpSyncClient* pClient)
 	delete pClient;
 }
 
-
 #endif
 
 //add begin 2018-09-03 by renyl, 生成客户端私钥, 证书请求
-HPSOCKET_API bool SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const std::string & private_key_password, const SSL_SubjectEntry & subj_entry, std::string & private_key, std::string & csr)
+HPSOCKET_API bool SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const std::string & private_key_password, const SSL_SubjectEntry & subj_entry, 
+	std::string & private_key, std::string & csr)
 {
 	CSSLCertHelper::SubjectEntry se;
 	se.country_name = subj_entry.country_name;
@@ -207,4 +207,23 @@ HPSOCKET_API bool SSL_CreatePemPrivateKeyAndCSR(int private_key_size, const std:
 	return CSSLCertHelper::CreatePemPrivateKeyAndCSR(private_key_size, private_key_password, se, private_key, csr);
 }
 //add end 2018-09-03 by renyl
+
+//add begin 2018-09-10 by renyl, 生成MD5
+HPSOCKET_API void SSL_MakeMD5(const std::string & s, std::string & d)
+{
+	d = CSSLCertHelper::MakeMD5(s);
+}
+//add end 2018-09-10 by renyl
+
+//add begin 2018-09-15 by renyl, AES-256-CBC加解密
+bool SSL_AES_256_CBC_Encrypt(const std::vector<byte>& src, const std::vector<byte>& key, const std::vector<byte> iv, std::vector<byte>& dst)
+{
+	return CSSLCertHelper::AES_256_CBC_Encrypt(src, key, iv, dst);
+}
+bool SSL_AES_256_CBC_Decrypt(const std::vector<byte>& src, const std::vector<byte>& key, const std::vector<byte> iv, std::vector<byte>& dst)
+{
+	return CSSLCertHelper::AES_256_CBC_Decrypt(src, key, iv, dst);
+}
+//add end 2018-09-15 by renyl
+
 #endif
